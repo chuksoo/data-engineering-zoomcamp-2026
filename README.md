@@ -4,14 +4,6 @@ This repo consists of notebooks, assignments and projects done as part of the Da
 ## Syllabus Overview
 The course consists of structured modules, hands-on workshops, and a final project to reinforce your learning.
 
-### **Prerequisites**
-To get the most out of this course, you should have:
-- Basic coding experience
-- Familiarity with SQL
-- Experience with Python (helpful but not required)
-
-No prior data engineering experience is necessary.
-
 ### **Modules**
 
 #### [Module 1: Containerization and Infrastructure as Code](01-docker-terraform/)
