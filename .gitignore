@@ -162,5 +162,6 @@ cython_debug/
 #.idea/
 
 # data
+*.parquet
 01-docker-terraform/2_docker_sql/ny_taxi_postgres_data/
 
