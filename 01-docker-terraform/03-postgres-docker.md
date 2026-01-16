@@ -17,7 +17,7 @@ docker run -it --rm \
   -e POSTGRES_DB="ny_taxi" \
   -v ny_taxi_postgres_data:/var/lib/postgresql/data \
   -p 5432:5432 \
-  postgres:16
+  postgres:18
 ```
 
 ### Explanation of Parameters
@@ -28,7 +28,7 @@ docker run -it --rm \
   * Data persists even after container is removed
   * Volume is stored in Docker's internal storage
 * `-p 5432:5432` maps port 5432 from container to host
-* `postgres:16` uses PostgreSQL version 16
+* `postgres:18` uses PostgreSQL version 18
 
 ### Alternative Approach - Bind Mount
 
@@ -43,7 +43,7 @@ docker run -it \
   -e POSTGRES_DB="ny_taxi" \
   -v $(pwd)/ny_taxi_postgres_data:/var/lib/postgresql/data \
   -p 5432:5432 \
-  postgres:16
+  postgres:18
 ```
 
 ### Named Volume vs Bind Mount
