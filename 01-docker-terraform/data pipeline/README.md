@@ -1044,15 +1044,15 @@ docker build -t taxi_ingest:v001 .
 You can drop the table in pgAdmin beforehand if you want, but the script will automatically replace the pre-existing table.
 
 ```bash
-docker run -it \
-  --network=pg-network \
+docker run -it --rm \
+  --network=pg_network \
   taxi_ingest:v001 \
-    --pg-user=root \
-    --pg-pass=root \
-    --pg-host=pgdatabase \
-    --pg-port=5432 \
-    --pg-db=ny_taxi \
-    --target-table=yellow_taxi_trips_2021_2 \
+    --pg_user=root \
+    --pg_passward=root \
+    --pg_host=pgdatabase \
+    --pg_port=5432 \
+    --pg_db=ny_taxi \
+    --target_table=yellow_taxi_trips_2021_1 \
     --year=2021 \
     --month=2 \
     --chunksize=100000
