@@ -15,15 +15,16 @@ docker run -it --rm \
   -e POSTGRES_USER="root" \
   -e POSTGRES_PASSWORD="root" \
   -e POSTGRES_DB="ny_taxi" \
-  -v ny_taxi_postgres_data:/var/lib/postgresql/data \
+  -v ny_taxi_postgres_data:/var/lib/postgresql \
   -p 5432:5432 \
   postgres:18
+
 ```
 
 ### Explanation of Parameters
 
 * `-e` sets environment variables (user, password, database name)
-* `-v ny_taxi_postgres_data:/var/lib/postgresql/data` creates a **named volume**
+* `-v ny_taxi_postgres_data:/var/lib/postgresql` creates a **named volume**
   * Docker manages this volume automatically
   * Data persists even after container is removed
   * Volume is stored in Docker's internal storage
@@ -41,7 +42,7 @@ docker run -it \
   -e POSTGRES_USER="root" \
   -e POSTGRES_PASSWORD="root" \
   -e POSTGRES_DB="ny_taxi" \
-  -v $(pwd)/ny_taxi_postgres_data:/var/lib/postgresql/data \
+  -v $(pwd)/ny_taxi_postgres_data:/var/lib/postgresql \
   -p 5432:5432 \
   postgres:18
 ```
