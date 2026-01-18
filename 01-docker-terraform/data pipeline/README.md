@@ -877,12 +877,12 @@ Make sure PostgreSQL is running, then execute the ingestion script:
 
 ```bash
 uv run python ingest_data.py \
-  --pg-user=root \
-  --pg-pass=root \
-  --pg-host=localhost \
-  --pg-port=5432 \
-  --pg-db=ny_taxi \
-  --target-table=yellow_taxi_trips \
+  --pg_user=root \
+  --pg_password=root \
+  --pg_host=localhost \
+  --pg_port=5432 \
+  --pg_db=ny_taxi \
+  --target_table=yellow_taxi_trips \
   --year=2021 \
   --month=1 \
   --chunksize=100000
@@ -942,13 +942,13 @@ The `-v pgadmin_data:/var/lib/pgadmin` volume mapping saves pgAdmin settings (se
 
 **Docker Networks**
 
-Let's create a virtual Docker network called `pg-network`:
+Let's create a virtual Docker network called `pg_network`:
 
 ```bash
-docker network create pg-network
+docker network create pg_network
 ```
 
-> You can remove the network later with the command `docker network rm pg-network`. You can look at the existing networks with `docker network ls`.
+> You can remove the network later with the command `docker network rm pg_network`. You can look at the existing networks with `docker network ls`.
 
 Stop both containers and re-run them with the network configuration:
 
@@ -960,7 +960,7 @@ docker run -it \
   -e POSTGRES_DB="ny_taxi" \
   -v ny_taxi_postgres_data:/var/lib/postgresql \
   -p 5432:5432 \
-  --network=pg-network \
+  --network=pg_network \
   --name pgdatabase \
   postgres:18
 
@@ -970,7 +970,7 @@ docker run -it \
   -e PGADMIN_DEFAULT_PASSWORD="root" \
   -v pgadmin_data:/var/lib/pgadmin \
   -p 8085:80 \
-  --network=pg-network \
+  --network=pg_network \
   --name pgadmin \
   dpage/pgadmin4
 ```
@@ -1147,17 +1147,17 @@ If you want to re-run the dockerized ingest script when you run Postgres and pgA
 # check the network link:
 docker network ls 
 
-# it's pipeline_default
+# it's datapipeline_default
 # now run the script:
 docker run -it \
-  --network=pipeline_default \
+  --network=datapipeline_default \
   taxi_ingest:v001 \
-    --pg-user=root \
-    --pg-pass=root \
-    --pg-host=pgdatabase \
-    --pg-port=5432 \
-    --pg-db=ny_taxi \
-    --target-table=yellow_taxi_trips_2021_2 \
+    --pg_user=root \
+    --pg_password=root \
+    --pg_host=pgdatabase \
+    --pg_port=5432 \
+    --pg_db=ny_taxi \
+    --target_table=yellow_taxi_trips_2021_2 \
     --year=2021 \
     --month=2 \
     --chunksize=100000
@@ -1216,7 +1216,7 @@ docker volume prune
 docker network ls
 
 # Remove specific network
-docker network rm pg-network
+docker network rm pg_network
 
 # Remove all unused networks
 docker network prune
