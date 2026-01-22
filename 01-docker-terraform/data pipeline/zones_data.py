@@ -25,8 +25,6 @@ def run(pg_user, pg_password, pg_host, pg_port, pg_db, target_table, chunksize):
     
     df_iter = pd.read_csv(
         url,
-        dtype=dtype,
-        parse_dates=parse_dates,
         iterator=True,
         chunksize=chunksize
     )
