@@ -67,8 +67,8 @@ volumes:
 - postgres:5433 
 - localhost:5432
 - db:5433
-- postgres:5432 
-- db:5432 ✅
+- postgres:5432
+- db:5432 ✅ 
 
 **Answer: db:5432**
 
@@ -85,110 +85,65 @@ Since pgAdmin runs in the same Docker network as Postgres, it should connect usi
 
 The goal is to load the datasets into PostgreSQL (running in Docker) so I can query them with SQL in pgAdmin.
 
-**Step 1: Start PostgreSQL + pgAdmin with Docker Compose**
+**Step-by-Step Guide to Ingesting Zones Data**
 
-- Step-by-Step Guide to Ingesting Zones Data
+To Start PostgreSQL + pgAdmin with Docker Compose
 
-Step 1: Set Up the Database Environment
-Start PostgreSQL and pgAdmin: Run docker-compose up -d in the homework directory to launch the database and admin interface.
-Verify containers are running: Use docker ps to confirm both postgres and pgadmin containers are up.
-Step 2: Build the Ingestion Docker Image
-Navigate to the homework directory: cd /workspaces/data-engineering-zoomcamp-2026/01-docker-terraform/homework
-Build the image: docker build -t zone_ingest:v001 .
-This creates a Docker image containing the Python script (zones_data.py) and its dependencies.
-Step 3: Run the Data Ingestion Script
-Execute the ingestion container:
+**Step 1: Set Up the Database Environment**
 
+- **Start PostgreSQL and pgAdmin**
+
+  Launch the database and admin interface in the homework directory
+  ```bash
+  docker-compose up -d
+  ```
+
+- **Verify containers are running**
+
+  Use `docker ps` to confirm both `postgres` and `pgadmin` containers are up.
+    
+**Step 2: Build the Ingestion Docker Image**
+
+- **Navigate to the homework directory**
+  ```bash
+  cd /workspaces/data-engineering-zoomcamp-2026/01-docker-terraform/homework
+  ```
+- **Build the image**
+  ```bash
+  docker build -t zone_ingest:v001 .
+  ```
+  *This creates a Docker image containing the Python script (zones_data.py) and its dependencies.*
+      
+**Step 3: Run the Data Ingestion Script**
+
+- Execute the ingestion container:
+```bash
 docker run -it \
   --network=homework_default \
   zone_ingest:v001 \
   --pg_user=postgres \
   --pg_password=postgres \
-  --pg_host=dezoomcamp \
+  --pg_host=db \
   --pg_port=5432 \
   --pg_db=ny_taxi \
   --target_table=taxi_zones
-
-Step 4: Verify the Data Ingestion
-Connect to pgAdmin: Open http://localhost:8081 in your browser.
-Login credentials: Email: pgadmin@pgadmin.com, Password: pgadmin
-Register server:
-Host: db (or dezoomcamp)
-Port: 5432
-Database: ny_taxi
-Username: postgres
-Password: postgres
-Query the data: Run SELECT COUNT(*) FROM taxi_zones; to confirm the data was loaded.
-
-Navigate to the `homework` folder (where `docker-compose.yaml` lives):
-
-
-Build the Docker Image
-```
-docker build -t postgres:17-alpine .
-```
-Start the Postgres Service
-```
-docker-compose up -d
 ```
 
+**Step 4: Verify the Data Ingestion**
 
-Run the containerized ingestion
-```
-docker run -it \
-  --network=homework_default \
-  zone_ingest:v001 \
-    --pg_user=postgres \
-    --pg_password=postgres \
-    --pg_host=dezoomcamp \
-    --pg_port=5433 \
-    --pg_db=ny_taxi \
-    --target_table=taxi_zones
-```
-
-Expected ports:
-- postgres: 5433 -> 5432
-- pgAdmin: 8080 -> 80
-
-**Step 2: Download the datasets**
-
-Create a local data/ folder under homework/ and download:
-```
-wget https://d37ci6vzurychx.cloudfront.net/trip-data/green_tripdata_2025-11.parquet
-wget https://github.com/DataTalksClub/nyc-tlc-data/releases/download/misc/taxi_zone_lookup.csv
-```
-**Step 3: Run ingestion**
-Initialize uv and install deps once:
-```
-uv init --python=3.13
-uv add pandas pyarrow sqlalchemy psycopg2-binary tqdm click
-```
-Run the ingestion script (loads two tables into Postgres):
-- green_trips (from parquet)
-- zones (from csv)
-```
-uv run python homework/ingest_data.py
-```
-
-**Step 4: Open pgAdmin and verify the tables**
-
-Forward port 8080 and open it in the browser.
-
-Login:
-- Email: pgadmin@pgadmin.com
-- Password: pgadmin
-
-Register a server (pgAdmin -> Register -> Server):
-- Host name/address: db
-- Port: 5432
-- Maintenance database: ny_taxi
-- Username: postgres
-- Password: postgres
-
-Quick verification in Query Tool:
+- **Connect to pgAdmin**: Open `http://localhost:8081` in your browser.
+- **Login credentials**: Email: `pgadmin@pgadmin.com`, Password: `pgadmin`
+- **Register server**:
+  - Host: `db (or dezoomcamp)`
+  - Port: `5432`
+  - Database: `ny_taxi`
+  - Username: `postgres`
+  - Password: `postgres`
+- **Query the data**: Run SQL `SELECT` query to confirm the data was loaded.
+  
 ```sql
 SELECT COUNT(*) FROM green_trips;
-SELECT COUNT(*) FROM zones;
+SELECT COUNT(*) FROM taxi_zones;
 ```
 
 ## Question 3. Counting short trips
