@@ -9,5 +9,5 @@ RUN uv sync --locked
 
 COPY zones_data.py .
 
-ENTRYPOINT ["python", "../data pipeline/zones_data.py"]
+ENTRYPOINT ["python", "zones_data.py"]
 

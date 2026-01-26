@@ -1,5 +1,5 @@
 services:
-  db:
+  dezoomcamp:
     container_name: postgres
     image: postgres:17-alpine
     environment:
@@ -18,7 +18,7 @@ services:
       PGADMIN_DEFAULT_EMAIL: "pgadmin@pgadmin.com"
       PGADMIN_DEFAULT_PASSWORD: "pgadmin"
     ports:
-      - "8080:80"
+      - "8081:80"
     volumes:
       - vol-pgadmin_data:/var/lib/pgadmin
 
