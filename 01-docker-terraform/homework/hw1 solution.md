@@ -134,7 +134,7 @@ docker run -it \
 - **Connect to pgAdmin**: Open `http://localhost:8081` in your browser.
 - **Login credentials**: Email: `pgadmin@pgadmin.com`, Password: `pgadmin`
 - **Register server**:
-  - Host: `db (or dezoomcamp)`
+  - Host: `db`
   - Port: `5432`
   - Database: `ny_taxi`
   - Username: `postgres`
