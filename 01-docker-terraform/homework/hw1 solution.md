@@ -116,7 +116,7 @@ To Start PostgreSQL + pgAdmin with Docker Compose
       
 **Step 3: Run the Data Ingestion Script**
 
-- Execute the ingestion container:
+- Execute the ingestion container for taxi zones:
 ```bash
 docker run -it \
   --network=homework_default \
@@ -129,9 +129,30 @@ docker run -it \
   --target_table=taxi_zones
 ```
 
+Re-run for green trips
+```bash
+docker build -t taxi_ingest:v001 .
+```
+
+```bash
+docker run -it \
+  --network=homework_default \
+  taxi_ingest:v001 \
+  --pg_user=postgres \
+  --pg_password=postgres \
+  --pg_host=db \
+  --pg_port=5432 \
+  --pg_db=ny_taxi \
+  --target_table=green_taxi_trips \
+  --year=2025 \
+  --month=11 \
+  --chunksize=100000
+```
+
+
 **Step 4: Verify the Data Ingestion**
 
-- **Connect to pgAdmin**: Open `http://localhost:8081` in your browser.
+- **Connect to pgAdmin**: Add Port and open the forwarded port `http://127.0.0.1:8082/login?next=/` in your browser.
 - **Login credentials**: Email: `pgadmin@pgadmin.com`, Password: `pgadmin`
 - **Register server**:
   - Host: `db`

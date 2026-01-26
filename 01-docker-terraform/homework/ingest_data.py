@@ -26,8 +26,8 @@ dtype = {
 }
 
 parse_dates = [
-    "tpep_pickup_datetime",
-    "tpep_dropoff_datetime"
+    "lpep_pickup_datetime",
+    "lpep_dropoff_datetime"
 ]
 
 @click.command()
@@ -38,24 +38,27 @@ parse_dates = [
 @click.option('--pg_db', default='ny_taxi', help='PostgreSQL database name')
 @click.option('--year', default=2021, type=int, help='Year of the data')
 @click.option('--month', default=1, type=int, help='Month of the data')
-@click.option('--target_table', default='yellow_taxi_data', help='Target table name')
+@click.option('--target_table', default='green_trips', help='Target table name')
 @click.option('--chunksize', default=100000, type=int, help='Chunk size for data ingestion')
 def run(pg_user, pg_password, pg_host, pg_port, pg_db, year, month, target_table, chunksize):
-    prefix = 'https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/'
-    url = f'{prefix}/yellow_tripdata_{year}-{month:02d}.csv.gz'
+    prefix = 'https://d37ci6vzurychx.cloudfront.net/trip-data/'
+    url = f'{prefix}/green_tripdata_{year}-{month:02d}.parquet'
 
     engine = create_engine(f'postgresql://{pg_user}:{pg_password}@{pg_host}:{pg_port}/{pg_db}')
     
-    df_iter = pd.read_csv(
-        url,
-        dtype=dtype,
-        parse_dates=parse_dates,
-        iterator=True,
-        chunksize=chunksize
-    )
+    df = pd.read_parquet(url)
+    
+    # Ensure datetime columns are parsed
+    for col in parse_dates:
+        if col in df.columns:
+            df[col] = pd.to_datetime(df[col])
+    
+    # Apply dtypes
+    df = df.astype(dtype, errors='ignore')
 
     first = True
-    for df_chunk in tqdm(df_iter):
+    for i in tqdm(range(0, len(df), chunksize)):
+        df_chunk = df.iloc[i:i+chunksize]
         if first:
             df_chunk.head(n=0).to_sql(
                 name=target_table, 
