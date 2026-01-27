@@ -42,7 +42,7 @@ parse_dates = [
 @click.option('--chunksize', default=100000, type=int, help='Chunk size for data ingestion')
 def run(pg_user, pg_password, pg_host, pg_port, pg_db, year, month, target_table, chunksize):
     prefix = 'https://d37ci6vzurychx.cloudfront.net/trip-data/'
-    url = f'{prefix}/green_tripdata_{year}-{month:02d}.parquet'
+    url = prefix + f'green_tripdata_{year}-{month:02d}.parquet'
 
     engine = create_engine(f'postgresql://{pg_user}:{pg_password}@{pg_host}:{pg_port}/{pg_db}')
     
