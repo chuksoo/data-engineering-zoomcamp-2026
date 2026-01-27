@@ -11,7 +11,7 @@ The course consists of structured modules, hands-on workshops, and a final proje
 - Docker and Docker Compose
 - Running PostgreSQL with Docker
 - Infrastructure setup with Terraform
-- Homework
+- [Homework](https://github.com/chuksoo/data-engineering-zoomcamp-2026/blob/main/01-docker-terraform/homework/hw1%20solution.md)
 
 #### [Module 2: Workflow Orchestration](02-workflow-orchestration/)
 - Data Lakes and Workflow Orchestration
