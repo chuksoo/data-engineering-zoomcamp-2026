@@ -163,7 +163,7 @@ docker run -it \
 - **Query the data**: Run SQL `SELECT` query to confirm the data was loaded.
   
 ```sql
-SELECT COUNT(*) FROM green_trips;
+SELECT COUNT(*) FROM green_taxi_trips;
 SELECT COUNT(*) FROM taxi_zones;
 ```
 
@@ -181,10 +181,10 @@ For the trips in November 2025 (lpep_pickup_datetime between '2025-11-01' and '2
 SELECT COUNT(*)
 FROM green_trips
 WHERE lpep_pickup_datetime >= '2025-11-01'
-  AND lpep_pickup_datetime < '2025-12-01'
-  AND trip_distance <= 1;
+AND lpep_pickup_datetime < '2025-12-01'
+AND trip_distance <= 1;
 ```
-Output:
+Answer:
 ```
 8007
 ```
@@ -204,8 +204,8 @@ Use the pick up time for your calculations.
 
 ```sql
 SELECT
-  DATE(lpep_pickup_datetime) AS pickup_day,
-  MAX(trip_distance) AS max_trip_distance
+  DATE(lpep_pickup_datetime) AS pickup_day
+  , MAX(trip_distance) AS max_trip_distance
 FROM green_trips
 WHERE lpep_pickup_datetime >= '2025-11-01'
   AND lpep_pickup_datetime < '2025-12-01'
@@ -214,11 +214,12 @@ GROUP BY DATE(lpep_pickup_datetime)
 ORDER BY max_trip_distance DESC
 LIMIT 1;
 ```
-Output:
-```
-pickup_day: 2025-11-14
-max_trip_distance: 88.03
-```
+
+Answer:
+
+| pickup_day | max_trip_distance |
+| --- | --- |
+| 2025-11-14 | 88.03 |
 
 ## Question 5. Biggest pickup zone
 
@@ -232,22 +233,22 @@ Which was the pickup zone with the largest `total_amount` (sum of all trips) on 
 **Solution: East Harlem North**
 ```sql
 SELECT
-  z."Zone" AS pickup_zone,
-  SUM(t.total_amount) AS total_amount_sum
-FROM green_trips t
-JOIN zones z
-  ON t."PULocationID" = z."LocationID"
-WHERE t.lpep_pickup_datetime >= '2025-11-18'
-  AND t.lpep_pickup_datetime <  '2025-11-19'
-GROUP BY z."Zone"
-ORDER BY total_amount_sum DESC
+  t_zone."Zone" AS pickup_zone
+  , SUM(trips.total_amount) AS largest_total_amount
+FROM green_taxi_trips AS trips
+JOIN taxi_zones AS t_zone
+  ON trips."PULocationID" = t_zone."LocationID"
+WHERE trips.lpep_pickup_datetime >= '2025-11-18'
+  AND trips.lpep_pickup_datetime <  '2025-11-19'
+GROUP BY t_zone."Zone"
+ORDER BY largest_total_amount DESC
 LIMIT 1;
 ```
-Output:
-```
-pickup_zone: East Harlem North
-total_amount_sum: 9281.919999999996
-```
+
+Answer:
+| pickup_zone | largest_total_amount |
+| --- | --- |
+| East Harlem North | 9281.919999999996 |
 
 ## Question 6. Largest tip
 
@@ -264,30 +265,31 @@ Note: it's `tip` , not `trip`. We need the name of the zone, not the ID.
 
 ```sql
 SELECT
-  z_drop."Zone" AS dropoff_zone,
-  t.tip_amount
-FROM green_trips t
-JOIN zones z_pick
-  ON t."PULocationID" = z_pick."LocationID"
-JOIN zones z_drop
-  ON t."DOLocationID" = z_drop."LocationID"
-WHERE z_pick."Zone" = 'East Harlem North'
-  AND t.lpep_pickup_datetime >= '2025-11-01'
-  AND t.lpep_pickup_datetime <  '2025-12-01'
-ORDER BY t.tip_amount DESC
+  zone_drop."Zone" AS dropoff_zone
+  , trips.tip_amount
+FROM green_taxi_trips AS trips
+JOIN taxi_zones AS zone_pick
+  ON trips."PULocationID" = zone_pick."LocationID"
+JOIN taxi_zones AS zone_drop
+  ON trips."DOLocationID" = zone_drop."LocationID"
+WHERE zone_pick."Zone" = 'East Harlem North'
+  AND trips.lpep_pickup_datetime >= '2025-11-01'
+  AND trips.lpep_pickup_datetime <  '2025-12-01'
+ORDER BY trips.tip_amount DESC
 LIMIT 1;
 ```
-Output:
-```
-dropoff_zone: Yorkville West
-tip_amount: 81.89
-```
+
+Answer:
+| dropoff_zone | tip_amount |
+| --- | --- |
+| Yorkville West | 81.89 |
+
 
 ## Terraform
 
 In this section, Terraform was used to provision the required GCP infrastructure for the course. 
 
-The Terraform configuration can be found in: `module-01-docker-terraform/terraform/gcp/`
+The Terraform configuration can be found in: `01-docker-terraform/terraform/main.tf`
 
 This setup includes two main files:
 
@@ -317,7 +319,7 @@ Answers:
 **Solution Explanation:**
 - `terraform init` initializes the working directory by downloading provider plugins and setting up the backend.
 - `terraform apply -auto-approve` generates the execution plan and applies the changes without requiring manual approval.
-- `terraform destroy` removes all infrastructure resources managed by Terraform.
+- `terraform destroy` removes all infrastructure resources by using the state file to decide what to destroy.
 
 
 
